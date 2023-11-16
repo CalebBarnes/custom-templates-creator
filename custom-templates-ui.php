@@ -4,37 +4,19 @@
  * Plugin Name: Custom Templates Creator
  * Plugin URI: https://github.com/CalebBarnes
  * Description: UI to create templates through a GUI in a plugin instead of in the theme.
- * Version: 1.0.0
+ * Version: 2.0.0
  * Author: Caleb Barnes
  * Author URI: https://github.com/CalebBarnes
  */
 
-
-
- function getTemplateFileName($templateName) {
+function getTemplateFileName($templateName) {
     return str_replace(' ', '-', strtolower($templateName));
- }
+}
 
 add_action('acf/init', 'ctc_acf_op_init');
 
 function ctc_acf_op_init()
 {
-
-
-    $test_post_id = 483;
-
-    $template_slug = get_page_template_slug($test_post_id);
-    $set_template  = get_post_meta( $test_post_id, '_wp_page_template', true );
-    
-    error_log("template_slug");
-    error_log(json_encode($template_slug));
-    error_log("set_template");
-    error_log(json_encode($set_template));
-    
-    $registered_templates = wp_get_theme()->get_post_templates();
-    error_log("registered_templates");
-    error_log(json_encode($registered_templates));
-
     if (function_exists('acf_add_options_page')) {
         acf_add_options_page([
             'page_title' => "Custom Template Creator",
@@ -85,3 +67,81 @@ function ctc_redirect_page_template ($template) {
 }
 
 add_filter ('page_template', 'ctc_redirect_page_template');
+
+
+add_action( 'acf/include_fields', function() {
+	if ( ! function_exists( 'acf_add_local_field_group' ) ) {
+		return;
+	}
+
+	acf_add_local_field_group( array(
+	'key' => 'group_65559d1c6199b',
+	'title' => 'Templates',
+	'fields' => array(
+		array(
+			'key' => 'field_65559d1db76ed',
+			'label' => 'Templates',
+			'name' => 'templates',
+			'aria-label' => '',
+			'type' => 'repeater',
+			'instructions' => '',
+			'required' => 0,
+			'conditional_logic' => 0,
+			'wrapper' => array(
+				'width' => '',
+				'class' => '',
+				'id' => '',
+			),
+			'layout' => 'table',
+			'pagination' => 0,
+			'min' => 0,
+			'max' => 0,
+			'collapsed' => '',
+			'button_label' => 'Add Row',
+			'rows_per_page' => 20,
+			'sub_fields' => array(
+				array(
+					'key' => 'field_65559d32b76ee',
+					'label' => 'Template Name',
+					'name' => 'template_name',
+					'aria-label' => '',
+					'type' => 'text',
+					'instructions' => '',
+					'required' => 0,
+					'conditional_logic' => 0,
+					'wrapper' => array(
+						'width' => '',
+						'class' => '',
+						'id' => '',
+					),
+					'default_value' => '',
+					'maxlength' => '',
+					'placeholder' => '',
+					'prepend' => '',
+					'append' => '',
+					'parent_repeater' => 'field_65559d1db76ed',
+				),
+			),
+		),
+	),
+	'location' => array(
+		array(
+			array(
+				'param' => 'options_page',
+				'operator' => '==',
+				'value' => 'custom-template-creator',
+			),
+		),
+	),
+	'menu_order' => 0,
+	'position' => 'normal',
+	'style' => 'default',
+	'label_placement' => 'top',
+	'instruction_placement' => 'label',
+	'hide_on_screen' => '',
+	'active' => true,
+	'description' => '',
+	'show_in_rest' => 0,
+) );
+} );
+
