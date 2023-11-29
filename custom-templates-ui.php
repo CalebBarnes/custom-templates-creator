@@ -4,12 +4,15 @@
  * Plugin Name: Custom Templates Creator
  * Plugin URI: https://github.com/CalebBarnes
  * Description: UI to create templates through a GUI in a plugin instead of in the theme.
- * Version: 2.0.0
+ * Version: 2.1.0
  * Author: Caleb Barnes
  * Author URI: https://github.com/CalebBarnes
  */
 
-function getTemplateFileName($templateName) {
+function getTemplateFileName($templateName) {	
+	if (empty($templateName)) {
+		return "";
+	}
     return str_replace(' ', '-', strtolower($templateName));
 }
 
@@ -30,6 +33,7 @@ function ctc_acf_op_init()
 function ctc_templates_callback($templates) {
     if (function_exists("get_field")){
         $custom_templates = get_field("templates", "option");
+		error_log(json_encode($custom_templates));
 
         if ($custom_templates) {
             foreach ($custom_templates as $custom_template) {
@@ -46,27 +50,27 @@ function ctc_templates_callback($templates) {
 
 add_filter('theme_page_templates', 'ctc_templates_callback');
 
-function ctc_redirect_page_template ($template) {
+// function ctc_redirect_page_template ($template) {
 
-    $custom_templates = get_field("templates", "option");
+//     $custom_templates = get_field("templates", "option");
 
-    if ($custom_templates) {
-        foreach($custom_templates as $custom_template) {
-            $fileName = getTemplateFileName($custom_template);
-            error_log("filename $fileName");
+//     if ($custom_templates) {
+//         foreach($custom_templates as $custom_template) {
+//             $fileName = getTemplateFileName($custom_template);
+//             error_log("filename $fileName");
 
-            if ($fileName == basename($template)) {
-                error_log("matched filename $fileName");
-                $template = WP_PLUGIN_DIR . "/custom-templates-ui/templates/test-template.php";
-                return $template;
-            }
-        }
-    } 
+//             if ($fileName == basename($template)) {
+//                 error_log("matched filename $fileName");
+//                 $template = WP_PLUGIN_DIR . "/custom-templates-ui/templates/test-template.php";
+//                 return $template;
+//             }
+//         }
+//     } 
 
-    return $template;
-}
+//     return $template;
+// }
 
-add_filter ('page_template', 'ctc_redirect_page_template');
+// add_filter ('page_template', 'ctc_redirect_page_template');
 
 
 add_action( 'acf/include_fields', function() {
