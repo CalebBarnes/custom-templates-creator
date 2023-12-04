@@ -49,29 +49,6 @@ function ctc_templates_callback($templates) {
 
 add_filter('theme_page_templates', 'ctc_templates_callback');
 
-// function ctc_redirect_page_template ($template) {
-
-//     $custom_templates = get_field("templates", "option");
-
-//     if ($custom_templates) {
-//         foreach($custom_templates as $custom_template) {
-//             $fileName = getTemplateFileName($custom_template);
-//             error_log("filename $fileName");
-
-//             if ($fileName == basename($template)) {
-//                 error_log("matched filename $fileName");
-//                 $template = WP_PLUGIN_DIR . "/custom-templates-ui/templates/test-template.php";
-//                 return $template;
-//             }
-//         }
-//     } 
-
-//     return $template;
-// }
-
-// add_filter ('page_template', 'ctc_redirect_page_template');
-
-
 add_action( 'acf/include_fields', function() {
 	if ( ! function_exists( 'acf_add_local_field_group' ) ) {
 		return;
