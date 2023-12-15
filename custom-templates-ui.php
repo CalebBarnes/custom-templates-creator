@@ -4,7 +4,7 @@
  * Plugin Name: Custom Templates Creator
  * Plugin URI: https://github.com/CalebBarnes
  * Description: UI to create templates through a GUI in a plugin instead of in the theme.
- * Version: 2.2.0
+ * Version: 2.3.0
  * Author: Caleb Barnes
  * Author URI: https://github.com/CalebBarnes
  */
@@ -20,6 +20,24 @@ add_action('acf/init', 'ctc_acf_op_init');
 
 function ctc_acf_op_init()
 {
+
+	// **** We are getting all page templates on acf/init so that it is "warmed up" and ready for when acf locations are loaded when editing field groups 
+	// Initialize templates with default placeholder for pages.
+	$post_templates         = array();
+	$post_templates['page'] = array();
+
+	// Loop over post types and append their templates.
+	if ( method_exists( 'WP_Theme', 'get_page_templates' ) ) {
+		$post_types = get_post_types();
+		foreach ( $post_types as $post_type ) {
+			$templates = wp_get_theme()->get_page_templates( null, $post_type );
+			if ( $templates ) {
+				$post_templates[ $post_type ] = $templates;
+			}
+		}
+	}
+	
+
     if (function_exists('acf_add_options_page')) {
         acf_add_options_page([
             'page_title' => "Custom Template Creator",
@@ -33,6 +51,9 @@ function ctc_acf_op_init()
 function ctc_templates_callback($templates) {
     if (function_exists("get_field")){
         $custom_templates = get_field("templates", "option");
+		if (!is_array($custom_templates)) {
+			return $templates;
+		}
 
         if ($custom_templates) {
             foreach ($custom_templates as $custom_template) {
